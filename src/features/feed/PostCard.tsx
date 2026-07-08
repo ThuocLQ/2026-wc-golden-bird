@@ -25,7 +25,7 @@ export function PostCard({ post, syncTick, onChanged }: { post: Post; syncTick: 
       </div>
       <p>{post.content}</p>
       <ReactionBar targetType="POST" targetId={post.id} summary={post.reactionSummary} myReaction={post.myReaction} onChanged={onChanged} />
-      <CommentList postId={post.id} syncTick={syncTick} refreshPost={onChanged} />
+      <CommentList postId={post.id} initialComments={post.comments} syncTick={syncTick} refreshPost={onChanged} />
     </article>
   );
 }
