@@ -61,7 +61,7 @@ export function FeedPage() {
           </div>
           <p className="muted">Chốt món, rủ team và phản ứng nhanh.</p>
         </div>
-        <button className="secondary icon-text" onClick={load}>
+        <button type="button" className="secondary icon-text" onClick={load}>
           <RefreshCw size={18} />
           <span>Làm mới</span>
         </button>
@@ -75,7 +75,7 @@ export function FeedPage() {
           </div>
         </div>
         <textarea value={content} maxLength={1000} onChange={(event) => setContent(event.target.value)} placeholder="Ai ăn gì, quán nào, chốt mấy giờ..." />
-        <button className="icon-text" disabled={saving || !content.trim()}>
+        <button type="submit" className="icon-text" disabled={saving || !content.trim()}>
           <Send size={18} />
           <span>{saving ? "Đang đăng..." : "Đăng post"}</span>
         </button>

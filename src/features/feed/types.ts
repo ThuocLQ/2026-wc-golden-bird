@@ -16,6 +16,7 @@ export type Post = {
   reactionSummary: ReactionSummary;
   myReaction: ReactionType | null;
   commentCount: number;
+  comments: Comment[];
   createdAt: string;
   canDelete: boolean;
 };

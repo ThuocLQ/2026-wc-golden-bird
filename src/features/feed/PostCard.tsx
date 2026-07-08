@@ -18,14 +18,14 @@ export function PostCard({ post, syncTick, onChanged }: { post: Post; syncTick: 
           <span className="muted"> · {displayTime(post.createdAt)}</span>
         </div>
         {post.canDelete && (
-          <button className="link" onClick={remove}>
+          <button type="button" className="link" onClick={remove}>
             Xóa
           </button>
         )}
       </div>
       <p>{post.content}</p>
       <ReactionBar targetType="POST" targetId={post.id} summary={post.reactionSummary} myReaction={post.myReaction} onChanged={onChanged} />
-      <CommentList postId={post.id} syncTick={syncTick} refreshPost={onChanged} />
+      <CommentList postId={post.id} initialComments={post.comments} syncTick={syncTick} refreshPost={onChanged} />
     </article>
   );
 }

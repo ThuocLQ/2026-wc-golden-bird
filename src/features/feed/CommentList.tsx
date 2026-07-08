@@ -5,22 +5,35 @@ import { createComment, deleteComment, listComments } from "./feedApi";
 import { ReactionBar } from "./ReactionBar";
 import type { Comment } from "./types";
 
-export function CommentList({ postId, syncTick, refreshPost }: { postId: string; syncTick: number; refreshPost: () => void }) {
-  const [comments, setComments] = useState<Comment[]>([]);
+export function CommentList({
+  postId,
+  initialComments,
+  syncTick,
+  refreshPost,
+}: {
+  postId: string;
+  initialComments: Comment[];
+  syncTick: number;
+  refreshPost: () => void;
+}) {
+  const [comments, setComments] = useState<Comment[]>(initialComments);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
   async function load() {
-    setComments(await listComments(postId));
+    const nextComments = await listComments(postId);
+    setComments(nextComments);
+    setError("");
   }
 
   useEffect(() => {
-    load().catch((err: Error) => setError(err.message));
-  }, [postId]);
+    setComments(initialComments);
+    setError("");
+  }, [initialComments, postId]);
 
   useEffect(() => {
-    if (!content.trim() && document.activeElement?.tagName.toLowerCase() !== "input") {
+    if (!content.trim() && document.activeElement?.tagName.toLowerCase() !== "input" && comments.length > 0) {
       load().catch((err: Error) => setError(err.message));
     }
   }, [syncTick]);
@@ -61,7 +74,7 @@ export function CommentList({ postId, syncTick, refreshPost }: { postId: string;
           <div className="row between">
             <ReactionBar targetType="COMMENT" targetId={comment.id} summary={comment.reactionSummary} myReaction={comment.myReaction} onChanged={load} />
             {comment.canDelete && (
-              <button className="link" onClick={() => remove(comment.id)}>
+              <button type="button" className="link" onClick={() => remove(comment.id)}>
                 Xóa
               </button>
             )}
@@ -70,7 +83,7 @@ export function CommentList({ postId, syncTick, refreshPost }: { postId: string;
       ))}
       <form className="inline-form" onSubmit={submit}>
         <input value={content} maxLength={500} onChange={(event) => setContent(event.target.value)} placeholder="Viết comment..." />
-        <button disabled={saving || !content.trim()}>Gửi</button>
+        <button type="submit" disabled={saving || !content.trim()}>Gửi</button>
       </form>
     </div>
   );

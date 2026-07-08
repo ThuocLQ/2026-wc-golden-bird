@@ -45,11 +45,8 @@ export function AdminMembersPage() {
   return (
     <div className="stack">
       <header className="page-header">
-        <div>
-          <span className="eyebrow">Admin Bench</span>
-          <h1>Đội hình thành viên</h1>
-        </div>
-        <button className="secondary" onClick={load}>
+        <h1>Members</h1>
+        <button type="button" className="secondary" onClick={load}>
           Làm mới
         </button>
       </header>
@@ -82,7 +79,7 @@ export function AdminMembersPage() {
             <input value={form.pin} type="password" minLength={4} maxLength={20} onChange={(event) => setForm({ ...form, pin: event.target.value })} required />
           </label>
         </div>
-        <button>Tạo member</button>
+        <button type="submit">Tạo member</button>
       </form>
       <section className="panel">
         <div className="panel-title">
@@ -102,10 +99,10 @@ export function AdminMembersPage() {
                 <StatusBadge value={member.role} />
                 <StatusBadge value={member.status} />
                 <div className="row end">
-                  <button className="secondary" onClick={() => resetPin(member.id)}>
+                  <button type="button" className="secondary" onClick={() => resetPin(member.id)}>
                     Reset PIN
                   </button>
-                  <button className="danger" disabled={member.status === "DISABLED"} onClick={() => disableMember(member.id).then(load)}>
+                  <button type="button" className="danger" disabled={member.status === "DISABLED"} onClick={() => disableMember(member.id).then(load)}>
                     Disable
                   </button>
                 </div>
