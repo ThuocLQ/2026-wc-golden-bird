@@ -32,13 +32,14 @@ export function TodayPage() {
 
   return (
     <div className="stack">
-      <header className="page-header">
+      <header className="page-header match-header">
         <div>
+          <span className="eyebrow">Matchday Lunch Board</span>
           <div className="title-row">
-            <h1>Hôm nay</h1>
+            <h1>Đội hình trưa nay</h1>
             <span className="live-pill">Live</span>
           </div>
-          <p className="muted">{displayDate(data.date)}</p>
+          <p className="muted">{displayDate(data.date)} · Chốt món nhanh, khỏi rơi nhịp trận.</p>
         </div>
         <button type="button" className="secondary" onClick={load}>
           Làm mới

@@ -3,10 +3,10 @@ import { upsertLunchEntry } from "./lunchApi";
 import type { LunchStatus, TodayDashboardData } from "./types";
 
 const options: Array<{ value: LunchStatus; label: string }> = [
-  { value: "BRING_LUNCH", label: "Mang cơm" },
-  { value: "EAT_OUT", label: "Đi ăn ngoài" },
-  { value: "NO_LUNCH", label: "Không ăn / không tham gia" },
-  { value: "UNDECIDED", label: "Chưa quyết định" },
+  { value: "BRING_LUNCH", label: "Mang cơm nhà" },
+  { value: "EAT_OUT", label: "Ra sân ăn ngoài" },
+  { value: "NO_LUNCH", label: "Nghỉ hiệp trưa" },
+  { value: "UNDECIDED", label: "Đang cân kèo" },
 ];
 
 export function LunchStatusForm({ data, onSaved }: { data: TodayDashboardData; onSaved: () => void }) {
@@ -39,12 +39,18 @@ export function LunchStatusForm({ data, onSaved }: { data: TodayDashboardData; o
 
   return (
     <form className="panel form" onSubmit={submit}>
-      <h2>Trưa nay của tôi</h2>
+      <div className="section-heading">
+        <div>
+          <span className="eyebrow">My Lineup</span>
+          <h2>Trưa nay của tôi</h2>
+        </div>
+        <span className="mini-badge">Cập nhật trước giờ ăn</span>
+      </div>
       <div className="radio-grid">
         {options.map((option) => (
           <label key={option.value} className={status === option.value ? "choice selected" : "choice"}>
             <input type="radio" name="status" value={option.value} checked={status === option.value} onChange={() => { setStatus(option.value); setDirty(true); }} />
-            {option.label}
+            <span>{option.label}</span>
           </label>
         ))}
       </div>

@@ -2,7 +2,7 @@ import { StatusBadge } from "../../components/StatusBadge";
 import type { LunchPerson, TodayDashboardData } from "./types";
 
 const cards = [
-  ["totalMembers", "Tổng members"],
+  ["totalMembers", "Tổng thành viên"],
   ["updatedCount", "Đã cập nhật"],
   ["notUpdatedCount", "Chưa cập nhật"],
   ["bringLunchCount", "Mang cơm"],
@@ -15,18 +15,31 @@ export function TodayDashboard({ data }: { data: TodayDashboardData }) {
   return (
     <div className="stack">
       <section className="stats">
-        {cards.map(([key, label]) => (
-          <div className="stat" key={key}>
+        {cards.map(([key, label], index) => (
+          <div className={`stat stat-${key}`} key={key}>
+            <small>#{index + 1}</small>
             <span>{label}</span>
             <strong>{data.summary[key]}</strong>
           </div>
         ))}
       </section>
+      <div className="section-heading">
+        <div>
+          <span className="eyebrow">Team Lineup</span>
+          <h2>Phân đội bữa trưa</h2>
+        </div>
+      </div>
       <div className="grid two">
         <PersonList title="Đi ăn ngoài" people={data.groups.eatOut} />
         <PersonList title="Mang cơm" people={data.groups.bringLunch} />
         <PersonList title="Không ăn" people={data.groups.noLunch} />
         <PersonList title="Chưa cập nhật" people={data.groups.notUpdated} />
+      </div>
+      <div className="section-heading">
+        <div>
+          <span className="eyebrow">Hot Picks</span>
+          <h2>Quán và món đang lên</h2>
+        </div>
       </div>
       <div className="grid two">
         <TopList title="Top quán" items={data.topRestaurants} />
@@ -39,7 +52,10 @@ export function TodayDashboard({ data }: { data: TodayDashboardData }) {
 function PersonList({ title, people }: { title: string; people: LunchPerson[] }) {
   return (
     <section className="panel">
-      <h2>{title}</h2>
+      <div className="panel-title">
+        <h2>{title}</h2>
+        <span className="mini-badge">{people.length}</span>
+      </div>
       {people.length === 0 ? (
         <p className="muted">Chưa có ai.</p>
       ) : (
@@ -66,7 +82,10 @@ function PersonList({ title, people }: { title: string; people: LunchPerson[] })
 function TopList({ title, items }: { title: string; items: Array<{ name: string; count: number }> }) {
   return (
     <section className="panel">
-      <h2>{title}</h2>
+      <div className="panel-title">
+        <h2>{title}</h2>
+        <span className="mini-badge">{items.length}</span>
+      </div>
       {items.length === 0 ? (
         <p className="muted">Chưa có dữ liệu.</p>
       ) : (

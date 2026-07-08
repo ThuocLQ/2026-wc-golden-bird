@@ -1,4 +1,4 @@
-import { LockKeyhole, Mail, Sparkles } from "lucide-react";
+import { LockKeyhole, Mail, Trophy } from "lucide-react";
 import { useState } from "react";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { login } from "../features/auth/authApi";
@@ -31,10 +31,11 @@ export function LoginPage({ onLogin }: { onLogin: (user: CurrentUser) => void })
       <form className="login-card" onSubmit={submit}>
         <div className="login-brand">
           <div className="brand-mark large">
-            <Sparkles size={24} />
+            <Trophy size={24} />
           </div>
-          <h1>Lunch Board</h1>
-          <p className="muted">Cập nhật bữa trưa của team trong vài giây.</p>
+          <span className="eyebrow">World Cup 2026 Internal</span>
+          <h1>Golden Bird Lunch Cup</h1>
+          <p className="muted">Check-in bữa trưa, chốt quán và sắp xếp vị trí đá wc trong vài giây</p>
         </div>
         {error && <ErrorMessage message={error} />}
         <label>

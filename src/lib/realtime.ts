@@ -78,7 +78,14 @@ async function getChanges(since: number): Promise<{ version: number; versions: R
   const response = await fetch(`/.netlify/functions/changes-get?since=${since}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
-  const result = await response.json();
+  const text = await response.text();
+  if (!text) throw new Error(`changes-get returned an empty response (${response.status})`);
+  let result: { success: boolean; error?: { message?: string }; data: { version: number; versions: Record<ChangeResource, number>; changed: ChangeResource[] } };
+  try {
+    result = JSON.parse(text);
+  } catch {
+    throw new Error(`changes-get did not return valid JSON (${response.status})`);
+  }
   if (!result.success) throw new Error(result.error?.message ?? "Could not read changes");
   return result.data;
 }

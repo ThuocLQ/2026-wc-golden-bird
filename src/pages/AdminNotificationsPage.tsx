@@ -53,7 +53,10 @@ export function AdminNotificationsPage() {
       {message && <div className="notice success">{message}</div>}
       {error && <ErrorMessage message={error} />}
       <section className="panel">
-        <h2>Latest 50 email logs</h2>
+        <div className="panel-title">
+          <h2>50 email gần nhất</h2>
+          <span className="mini-badge">{logs.length}</span>
+        </div>
         {loading ? (
           <Loading />
         ) : logs.length === 0 ? (

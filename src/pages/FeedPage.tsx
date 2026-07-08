@@ -54,8 +54,9 @@ export function FeedPage() {
     <div className="stack">
       <header className="page-header">
         <div>
+          <span className="eyebrow">Team Huddle</span>
           <div className="title-row">
-            <h1>Feed</h1>
+            <h1>Sân bàn luận</h1>
             <span className="live-pill">Live</span>
           </div>
           <p className="muted">Chốt món, rủ team và phản ứng nhanh.</p>
@@ -67,6 +68,12 @@ export function FeedPage() {
       </header>
       {error && <ErrorMessage message={error} />}
       <form className="panel form composer" onSubmit={submit}>
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">New Play</span>
+            <h2>Gọi kèo ăn trưa</h2>
+          </div>
+        </div>
         <textarea value={content} maxLength={1000} onChange={(event) => setContent(event.target.value)} placeholder="Ai ăn gì, quán nào, chốt mấy giờ..." />
         <button type="submit" className="icon-text" disabled={saving || !content.trim()}>
           <Send size={18} />
