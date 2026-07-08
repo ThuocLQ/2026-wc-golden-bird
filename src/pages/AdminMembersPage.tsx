@@ -45,14 +45,22 @@ export function AdminMembersPage() {
   return (
     <div className="stack">
       <header className="page-header">
-        <h1>Members</h1>
+        <div>
+          <span className="eyebrow">Admin Bench</span>
+          <h1>Đội hình thành viên</h1>
+        </div>
         <button className="secondary" onClick={load}>
           Làm mới
         </button>
       </header>
       {error && <ErrorMessage message={error} />}
       <form className="panel form" onSubmit={submit}>
-        <h2>Tạo member</h2>
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">New Player</span>
+            <h2>Tạo member</h2>
+          </div>
+        </div>
         <div className="grid four">
           <label>
             Email
@@ -77,7 +85,10 @@ export function AdminMembersPage() {
         <button>Tạo member</button>
       </form>
       <section className="panel">
-        <h2>Danh sách</h2>
+        <div className="panel-title">
+          <h2>Danh sách</h2>
+          <span className="mini-badge">{members.length}</span>
+        </div>
         {loading ? (
           <Loading />
         ) : (

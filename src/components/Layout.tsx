@@ -1,4 +1,4 @@
-import { Bell, CalendarDays, LogOut, Mail, MessageCircle, Sparkles, Users } from "lucide-react";
+import { Bell, CalendarDays, LogOut, Mail, MessageCircle, Trophy, Users } from "lucide-react";
 import type { CurrentUser } from "../features/auth/types";
 
 export function Layout({
@@ -15,12 +15,12 @@ export function Layout({
   children: React.ReactNode;
 }) {
   const navItems = [
-    { path: "/today", label: "Hôm nay", icon: CalendarDays },
-    { path: "/feed", label: "Feed", icon: MessageCircle },
+    { path: "/today", label: "Bữa trưa", icon: CalendarDays },
+    { path: "/feed", label: "Sân bàn luận", icon: MessageCircle },
     ...(user.role === "ADMIN"
       ? [
-          { path: "/admin/members", label: "Members", icon: Users },
-          { path: "/admin/notifications", label: "Email", icon: Mail },
+          { path: "/admin/members", label: "Đội hình", icon: Users },
+          { path: "/admin/notifications", label: "Nhắc lịch", icon: Mail },
         ]
       : []),
   ];
@@ -30,12 +30,16 @@ export function Layout({
       <aside className="sidebar">
         <div className="brand-block">
           <div className="brand-mark">
-            <Sparkles size={20} />
+            <Trophy size={20} />
           </div>
           <div>
-            <div className="brand">Lunch Board</div>
-            <div className="muted">{user.displayName}</div>
+            <div className="brand">Golden Bird</div>
+            <div className="brand-subtitle">Lunch Cup 2026</div>
           </div>
+        </div>
+        <div className="user-card">
+          <span>Đang thi đấu</span>
+          <strong>{user.displayName}</strong>
         </div>
         <nav>
           {navItems.map((item) => {

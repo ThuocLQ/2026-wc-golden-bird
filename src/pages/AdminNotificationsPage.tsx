@@ -45,7 +45,10 @@ export function AdminNotificationsPage() {
   return (
     <div className="stack">
       <header className="page-header">
-        <h1>Email reminder</h1>
+        <div>
+          <span className="eyebrow">Reminder Booth</span>
+          <h1>Email nhắc lịch</h1>
+        </div>
         <button disabled={sending} onClick={remind}>
           {sending ? "Đang gửi..." : "Gửi reminder ngay"}
         </button>
@@ -53,7 +56,10 @@ export function AdminNotificationsPage() {
       {message && <div className="notice success">{message}</div>}
       {error && <ErrorMessage message={error} />}
       <section className="panel">
-        <h2>Latest 50 email logs</h2>
+        <div className="panel-title">
+          <h2>50 email gần nhất</h2>
+          <span className="mini-badge">{logs.length}</span>
+        </div>
         {loading ? (
           <Loading />
         ) : logs.length === 0 ? (

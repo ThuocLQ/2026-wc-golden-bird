@@ -29,10 +29,35 @@ async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
     },
   });
 
-  const result = (await response.json()) as ApiResult<T>;
+  const result = await readApiResult<T>(response, path);
   if (!result.success) {
     if (result.error.code === "UNAUTHORIZED") authStore.clear();
     throw new Error(result.error.message);
   }
   return result.data;
+}
+
+async function readApiResult<T>(response: Response, path: string): Promise<ApiResult<T>> {
+  const text = await response.text();
+  if (!text) {
+    return {
+      success: false,
+      error: {
+        code: "EMPTY_RESPONSE",
+        message: `API ${path} trả về response rỗng (${response.status}). Hãy chạy bằng npm run netlify:dev để có Netlify Functions.`,
+      },
+    } as ApiResult<T>;
+  }
+
+  try {
+    return JSON.parse(text) as ApiResult<T>;
+  } catch {
+    return {
+      success: false,
+      error: {
+        code: "INVALID_JSON",
+        message: `API ${path} không trả về JSON hợp lệ (${response.status}).`,
+      },
+    } as ApiResult<T>;
+  }
 }
