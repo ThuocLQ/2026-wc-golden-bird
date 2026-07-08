@@ -6,6 +6,7 @@ import { LunchStatusForm } from "../features/lunch/LunchStatusForm";
 import { TodayDashboard } from "../features/lunch/TodayDashboard";
 import type { TodayDashboardData } from "../features/lunch/types";
 import { displayDate } from "../lib/date";
+import { useRealtimeRefresh } from "../lib/realtime";
 
 export function TodayPage() {
   const [data, setData] = useState<TodayDashboardData | null>(null);
@@ -24,6 +25,8 @@ export function TodayPage() {
     load();
   }, []);
 
+  useRealtimeRefresh(load);
+
   if (error) return <ErrorMessage message={error} />;
   if (!data) return <Loading />;
 
@@ -31,7 +34,10 @@ export function TodayPage() {
     <div className="stack">
       <header className="page-header">
         <div>
-          <h1>Hôm nay</h1>
+          <div className="title-row">
+            <h1>Hôm nay</h1>
+            <span className="live-pill">Live</span>
+          </div>
           <p className="muted">{displayDate(data.date)}</p>
         </div>
         <button className="secondary" onClick={load}>

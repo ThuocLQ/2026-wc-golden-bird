@@ -5,6 +5,7 @@ import { Loading } from "../components/Loading";
 import { createPost, listPosts } from "../features/feed/feedApi";
 import { PostCard } from "../features/feed/PostCard";
 import type { Post } from "../features/feed/types";
+import { useRealtimeRefresh } from "../lib/realtime";
 
 export function FeedPage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -28,6 +29,8 @@ export function FeedPage() {
     load();
   }, []);
 
+  useRealtimeRefresh(load);
+
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (!content.trim()) return;
@@ -47,7 +50,10 @@ export function FeedPage() {
     <div className="stack">
       <header className="page-header">
         <div>
-          <h1>Feed</h1>
+          <div className="title-row">
+            <h1>Feed</h1>
+            <span className="live-pill">Live</span>
+          </div>
           <p className="muted">Chốt món, rủ team và phản ứng nhanh.</p>
         </div>
         <button className="secondary icon-text" onClick={load}>

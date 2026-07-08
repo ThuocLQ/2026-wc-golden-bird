@@ -1,4 +1,5 @@
 import { authStore } from "../features/auth/authStore";
+import { notifyDataChanged } from "./realtime";
 
 export type ApiResult<T> = { success: true; data: T } | { success: false; error: { code: string; message: string } };
 
@@ -7,10 +8,14 @@ export async function apiGet<T>(path: string): Promise<T> {
 }
 
 export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
-  return apiRequest<T>(path, {
+  const result = await apiRequest<T>(path, {
     method: "POST",
     body: JSON.stringify(body ?? {}),
   });
+  if (!path.startsWith("auth-")) {
+    notifyDataChanged(path);
+  }
+  return result;
 }
 
 async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {

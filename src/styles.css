@@ -278,6 +278,34 @@ nav,
   margin-bottom: 2px;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: #e7f8ef;
+  color: #087443;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 4px 9px;
+  text-transform: uppercase;
+}
+
+.live-pill::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+  content: "";
+  box-shadow: 0 0 0 5px rgb(8 116 67 / 12%);
+}
+
 .between {
   justify-content: space-between;
 }
