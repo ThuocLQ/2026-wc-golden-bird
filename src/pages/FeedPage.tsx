@@ -5,7 +5,7 @@ import { Loading } from "../components/Loading";
 import { createPost, listPosts } from "../features/feed/feedApi";
 import { PostCard } from "../features/feed/PostCard";
 import type { Post } from "../features/feed/types";
-import { useRealtimeRefresh } from "../lib/realtime";
+import { useRealtimeSync } from "../lib/realtime";
 
 export function FeedPage() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -13,6 +13,7 @@ export function FeedPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [syncTick, setSyncTick] = useState(0);
 
   async function load() {
     setError("");
@@ -29,7 +30,10 @@ export function FeedPage() {
     load();
   }, []);
 
-  useRealtimeRefresh(load);
+  useRealtimeSync("feed", async () => {
+    await load();
+    setSyncTick((value) => value + 1);
+  });
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -69,7 +73,7 @@ export function FeedPage() {
           <span>{saving ? "Đang đăng..." : "Đăng post"}</span>
         </button>
       </form>
-      {loading ? <Loading /> : posts.length === 0 ? <div className="notice">Chưa có post nào hôm nay.</div> : posts.map((post) => <PostCard key={post.id} post={post} onChanged={load} />)}
+      {loading ? <Loading /> : posts.length === 0 ? <div className="notice">Chưa có post nào hôm nay.</div> : posts.map((post) => <PostCard key={post.id} post={post} syncTick={syncTick} onChanged={load} />)}
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { createComment, deleteComment, listComments } from "./feedApi";
 import { ReactionBar } from "./ReactionBar";
 import type { Comment } from "./types";
 
-export function CommentList({ postId, refreshPost }: { postId: string; refreshPost: () => void }) {
+export function CommentList({ postId, syncTick, refreshPost }: { postId: string; syncTick: number; refreshPost: () => void }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
@@ -18,6 +18,12 @@ export function CommentList({ postId, refreshPost }: { postId: string; refreshPo
   useEffect(() => {
     load().catch((err: Error) => setError(err.message));
   }, [postId]);
+
+  useEffect(() => {
+    if (!content.trim() && document.activeElement?.tagName.toLowerCase() !== "input") {
+      load().catch((err: Error) => setError(err.message));
+    }
+  }, [syncTick]);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();

@@ -4,7 +4,7 @@ import { CommentList } from "./CommentList";
 import { ReactionBar } from "./ReactionBar";
 import type { Post } from "./types";
 
-export function PostCard({ post, onChanged }: { post: Post; onChanged: () => void }) {
+export function PostCard({ post, syncTick, onChanged }: { post: Post; syncTick: number; onChanged: () => void }) {
   async function remove() {
     await deletePost(post.id);
     onChanged();
@@ -25,7 +25,7 @@ export function PostCard({ post, onChanged }: { post: Post; onChanged: () => voi
       </div>
       <p>{post.content}</p>
       <ReactionBar targetType="POST" targetId={post.id} summary={post.reactionSummary} myReaction={post.myReaction} onChanged={onChanged} />
-      <CommentList postId={post.id} refreshPost={onChanged} />
+      <CommentList postId={post.id} syncTick={syncTick} refreshPost={onChanged} />
     </article>
   );
 }

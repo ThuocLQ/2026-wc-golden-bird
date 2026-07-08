@@ -6,7 +6,7 @@ import { LunchStatusForm } from "../features/lunch/LunchStatusForm";
 import { TodayDashboard } from "../features/lunch/TodayDashboard";
 import type { TodayDashboardData } from "../features/lunch/types";
 import { displayDate } from "../lib/date";
-import { useRealtimeRefresh } from "../lib/realtime";
+import { useRealtimeSync } from "../lib/realtime";
 
 export function TodayPage() {
   const [data, setData] = useState<TodayDashboardData | null>(null);
@@ -25,7 +25,7 @@ export function TodayPage() {
     load();
   }, []);
 
-  useRealtimeRefresh(load);
+  useRealtimeSync("today", load);
 
   if (error) return <ErrorMessage message={error} />;
   if (!data) return <Loading />;

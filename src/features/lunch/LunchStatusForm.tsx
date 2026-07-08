@@ -15,19 +15,22 @@ export function LunchStatusForm({ data, onSaved }: { data: TodayDashboardData; o
   const [foodName, setFoodName] = useState(data.me.foodName);
   const [note, setNote] = useState(data.me.note);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
+    if (dirty) return;
     setStatus(data.me.status);
     setRestaurantName(data.me.restaurantName);
     setFoodName(data.me.foodName);
     setNote(data.me.note);
-  }, [data]);
+  }, [data, dirty]);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setSaving(true);
     try {
       await upsertLunchEntry({ status, restaurantName, foodName, note });
+      setDirty(false);
       onSaved();
     } finally {
       setSaving(false);
@@ -40,7 +43,7 @@ export function LunchStatusForm({ data, onSaved }: { data: TodayDashboardData; o
       <div className="radio-grid">
         {options.map((option) => (
           <label key={option.value} className={status === option.value ? "choice selected" : "choice"}>
-            <input type="radio" name="status" value={option.value} checked={status === option.value} onChange={() => setStatus(option.value)} />
+            <input type="radio" name="status" value={option.value} checked={status === option.value} onChange={() => { setStatus(option.value); setDirty(true); }} />
             {option.label}
           </label>
         ))}
@@ -49,17 +52,17 @@ export function LunchStatusForm({ data, onSaved }: { data: TodayDashboardData; o
         <div className="grid two">
           <label>
             Quán
-            <input value={restaurantName} maxLength={100} onChange={(event) => setRestaurantName(event.target.value)} placeholder="VD: Cơm gà A" />
+            <input value={restaurantName} maxLength={100} onChange={(event) => { setRestaurantName(event.target.value); setDirty(true); }} placeholder="VD: Cơm gà A" />
           </label>
           <label>
             Món
-            <input value={foodName} maxLength={100} onChange={(event) => setFoodName(event.target.value)} placeholder="VD: Cơm gà xối mỡ" />
+            <input value={foodName} maxLength={100} onChange={(event) => { setFoodName(event.target.value); setDirty(true); }} placeholder="VD: Cơm gà xối mỡ" />
           </label>
         </div>
       )}
       <label>
         Ghi chú
-        <textarea value={note} maxLength={500} onChange={(event) => setNote(event.target.value)} placeholder="Không hành, ít cay..." />
+        <textarea value={note} maxLength={500} onChange={(event) => { setNote(event.target.value); setDirty(true); }} placeholder="Không hành, ít cay..." />
       </label>
       <button disabled={saving}>{saving ? "Đang lưu..." : "Lưu trạng thái"}</button>
     </form>

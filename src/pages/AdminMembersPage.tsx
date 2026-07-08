@@ -4,7 +4,7 @@ import { Loading } from "../components/Loading";
 import { StatusBadge } from "../components/StatusBadge";
 import { createMember, disableMember, listMembers, setPin } from "../features/admin/adminApi";
 import type { Member } from "../features/admin/types";
-import { useRealtimeRefresh } from "../lib/realtime";
+import { useRealtimeSync } from "../lib/realtime";
 
 export function AdminMembersPage() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -27,7 +27,7 @@ export function AdminMembersPage() {
     load();
   }, []);
 
-  useRealtimeRefresh(load, 12000);
+  useRealtimeSync("members", load, 12000);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
