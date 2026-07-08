@@ -1,0 +1,15 @@
+node_modules/
+.npm-cache/
+dist/
+.netlify/
+.env
+.env.local
+*service-account*.json
+wc-golden-bird-*.json
+npm-debug.log*
+*.tsbuildinfo
+netlify-dev.*.log
+vite.config.js
+vite.config.d.ts
+scripts/*.js
+scripts/*.d.ts
