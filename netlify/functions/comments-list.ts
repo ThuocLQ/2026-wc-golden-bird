@@ -11,16 +11,18 @@ export const handler: Handler = async (event) =>
     const postId = event.queryStringParameters?.postId;
     if (!postId) throw new ApiError("VALIDATION_ERROR", "Missing postId");
 
-    const [comments, users, reactions] = await Promise.all([
-      readTable<CommentRow>("comments"),
-      readTable<UserRow>("users"),
-      readTable<ReactionRow>("reactions"),
-    ]);
+    const comments = (await readTable<CommentRow>("comments"))
+      .filter((comment) => comment.postId === postId && comment.status === "ACTIVE")
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+
+    if (comments.length === 0) {
+      return ok([]);
+    }
+
+    const [users, reactions] = await Promise.all([readTable<UserRow>("users"), readTable<ReactionRow>("reactions")]);
 
     return ok(
       comments
-        .filter((comment) => comment.postId === postId && comment.status === "ACTIVE")
-        .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
         .map((comment) => ({
           id: comment.id,
           postId: comment.postId,

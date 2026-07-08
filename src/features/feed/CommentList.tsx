@@ -12,7 +12,9 @@ export function CommentList({ postId, syncTick, refreshPost }: { postId: string;
   const [saving, setSaving] = useState(false);
 
   async function load() {
-    setComments(await listComments(postId));
+    const nextComments = await listComments(postId);
+    setComments(nextComments);
+    setError("");
   }
 
   useEffect(() => {
