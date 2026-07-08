@@ -1,3 +1,4 @@
+import { Flame, Heart, ThumbsUp } from "lucide-react";
 import type { ReactionType } from "../features/feed/types";
 
 const reactionLabels: Record<ReactionType, string> = {
@@ -6,10 +7,10 @@ const reactionLabels: Record<ReactionType, string> = {
   ANGRY: "Phẫn nộ",
 };
 
-const reactionIcons: Record<ReactionType, string> = {
-  LIKE: "👍",
-  LOVE: "❤️",
-  ANGRY: "😡",
+const reactionIcons = {
+  LIKE: ThumbsUp,
+  LOVE: Heart,
+  ANGRY: Flame,
 };
 
 export function ReactionButton({
@@ -25,9 +26,10 @@ export function ReactionButton({
   disabled?: boolean;
   onClick: () => void;
 }) {
+  const Icon = reactionIcons[type];
   return (
     <button className={`icon-button reaction ${active ? "active" : ""}`} disabled={disabled} onClick={onClick} title={reactionLabels[type]}>
-      <span aria-hidden="true">{reactionIcons[type]}</span>
+      <Icon size={17} />
       <span>{count}</span>
     </button>
   );

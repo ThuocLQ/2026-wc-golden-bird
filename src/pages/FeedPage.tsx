@@ -1,3 +1,4 @@
+import { RefreshCw, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { Loading } from "../components/Loading";
@@ -45,15 +46,22 @@ export function FeedPage() {
   return (
     <div className="stack">
       <header className="page-header">
-        <h1>Feed</h1>
-        <button className="secondary" onClick={load}>
-          Làm mới
+        <div>
+          <h1>Feed</h1>
+          <p className="muted">Chốt món, rủ team và phản ứng nhanh.</p>
+        </div>
+        <button className="secondary icon-text" onClick={load}>
+          <RefreshCw size={18} />
+          <span>Làm mới</span>
         </button>
       </header>
       {error && <ErrorMessage message={error} />}
-      <form className="panel form" onSubmit={submit}>
+      <form className="panel form composer" onSubmit={submit}>
         <textarea value={content} maxLength={1000} onChange={(event) => setContent(event.target.value)} placeholder="Ai ăn gì, quán nào, chốt mấy giờ..." />
-        <button disabled={saving || !content.trim()}>{saving ? "Đang đăng..." : "Đăng post"}</button>
+        <button className="icon-text" disabled={saving || !content.trim()}>
+          <Send size={18} />
+          <span>{saving ? "Đang đăng..." : "Đăng post"}</span>
+        </button>
       </form>
       {loading ? <Loading /> : posts.length === 0 ? <div className="notice">Chưa có post nào hôm nay.</div> : posts.map((post) => <PostCard key={post.id} post={post} onChanged={load} />)}
     </div>
