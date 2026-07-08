@@ -25,6 +25,8 @@ export function ReactionBar({
     try {
       await toggleReaction(targetType, targetId, type);
       onChanged();
+    } catch (error) {
+      console.error(error);
     } finally {
       setSaving(false);
     }

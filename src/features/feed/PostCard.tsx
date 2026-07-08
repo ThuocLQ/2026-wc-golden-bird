@@ -18,7 +18,7 @@ export function PostCard({ post, syncTick, onChanged }: { post: Post; syncTick: 
           <span className="muted"> · {displayTime(post.createdAt)}</span>
         </div>
         {post.canDelete && (
-          <button className="link" onClick={remove}>
+          <button type="button" className="link" onClick={remove}>
             Xóa
           </button>
         )}

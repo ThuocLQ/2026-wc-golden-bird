@@ -46,7 +46,7 @@ export function AdminNotificationsPage() {
     <div className="stack">
       <header className="page-header">
         <h1>Email reminder</h1>
-        <button disabled={sending} onClick={remind}>
+        <button type="button" disabled={sending} onClick={remind}>
           {sending ? "Đang gửi..." : "Gửi reminder ngay"}
         </button>
       </header>

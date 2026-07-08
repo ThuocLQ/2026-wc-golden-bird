@@ -61,7 +61,7 @@ export function CommentList({ postId, syncTick, refreshPost }: { postId: string;
           <div className="row between">
             <ReactionBar targetType="COMMENT" targetId={comment.id} summary={comment.reactionSummary} myReaction={comment.myReaction} onChanged={load} />
             {comment.canDelete && (
-              <button className="link" onClick={() => remove(comment.id)}>
+              <button type="button" className="link" onClick={() => remove(comment.id)}>
                 Xóa
               </button>
             )}
@@ -70,7 +70,7 @@ export function CommentList({ postId, syncTick, refreshPost }: { postId: string;
       ))}
       <form className="inline-form" onSubmit={submit}>
         <input value={content} maxLength={500} onChange={(event) => setContent(event.target.value)} placeholder="Viết comment..." />
-        <button disabled={saving || !content.trim()}>Gửi</button>
+        <button type="submit" disabled={saving || !content.trim()}>Gửi</button>
       </form>
     </div>
   );

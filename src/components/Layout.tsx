@@ -41,7 +41,7 @@ export function Layout({
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
-              <button key={item.path} className={path === item.path ? "nav active" : "nav"} onClick={() => onNavigate(item.path)}>
+              <button type="button" key={item.path} className={path === item.path ? "nav active" : "nav"} onClick={() => onNavigate(item.path)}>
                 <Icon size={20} />
                 <span>{item.label}</span>
               </button>
@@ -49,10 +49,10 @@ export function Layout({
           })}
         </nav>
         <div className="sidebar-footer">
-          <button className="ghost-icon" title="Thông báo">
+          <button type="button" className="ghost-icon" title="Thông báo">
             <Bell size={18} />
           </button>
-          <button className="secondary logout" onClick={onLogout}>
+          <button type="button" className="secondary logout" onClick={onLogout}>
             <LogOut size={18} />
             <span>Đăng xuất</span>
           </button>
