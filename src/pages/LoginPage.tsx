@@ -4,12 +4,15 @@ import { ErrorMessage } from "../components/ErrorMessage";
 import { login } from "../features/auth/authApi";
 import { authStore } from "../features/auth/authStore";
 import type { CurrentUser } from "../features/auth/types";
+import { demoAdmin } from "../lib/demoAccounts";
+import { isMockApiEnabled } from "../lib/mockMode";
 
 export function LoginPage({ onLogin }: { onLogin: (user: CurrentUser) => void }) {
   const [email, setEmail] = useState("");
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const mockMode = isMockApiEnabled();
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -37,6 +40,11 @@ export function LoginPage({ onLogin }: { onLogin: (user: CurrentUser) => void })
           <h1>Golden Bird Lunch Cup</h1>
           <p className="muted">Check-in bữa trưa, chốt quán và sắp xếp vị trí đá wc trong vài giây</p>
         </div>
+        {mockMode && (
+          <div className="notice">
+            Demo admin: <strong>{demoAdmin.email}</strong> / PIN <strong>{demoAdmin.pin}</strong>
+          </div>
+        )}
         {error && <ErrorMessage message={error} />}
         <label>
           Email
