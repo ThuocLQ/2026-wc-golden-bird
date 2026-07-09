@@ -14,11 +14,11 @@ Internal lunch status board built with Vite, React, TypeScript, Netlify Function
 
 3. Copy `.env.example` to `.env` and fill the values. Do not prefix secrets with `VITE_`.
 
-   Supabase is used automatically when both values are set:
+   Supabase is used automatically when the URL and server-side secret key are set:
 
    ```text
    SUPABASE_URL=
-   SUPABASE_SERVICE_ROLE_KEY=
+   SUPABASE_SECRET_KEY=
    ```
 
    Google Sheets is still supported as a fallback and as a migration source.
@@ -63,7 +63,7 @@ Use `npm run netlify:dev` for local full-stack testing because the frontend call
 
 1. Create a Supabase project.
 2. Open Supabase SQL Editor and run `supabase/schema.sql`.
-3. Add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to `.env`.
+3. Add `SUPABASE_URL` and `SUPABASE_SECRET_KEY` to `.env`.
 4. Run `npm run migrate:supabase` to copy current Google Sheets data into Supabase.
 5. Add the same two Supabase env vars to Netlify production environment variables.
 6. Deploy with `netlify deploy --build --prod`.

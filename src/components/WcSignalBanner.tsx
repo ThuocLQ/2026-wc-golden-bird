@@ -49,6 +49,7 @@ export function WcSignalBanner({ user, onNavigate }: { user: CurrentUser; onNavi
   }
 
   function dismiss() {
+    if (!request) return;
     localStorage.setItem("wc-dismissed-request-id", request.id);
     setDismissedId(request.id);
   }
@@ -70,19 +71,19 @@ export function WcSignalBanner({ user, onNavigate }: { user: CurrentUser; onNavi
       </div>
       <div className="wc-signal-actions">
         {!isRequester && !joined && (
-          <button disabled={saving} onClick={join}>
+          <button type="button" disabled={saving} onClick={join}>
             Đi cùng
           </button>
         )}
         {isRequester && (
-          <button className="secondary" disabled={saving} onClick={close}>
+          <button type="button" className="secondary" disabled={saving} onClick={close}>
             Xong rồi
           </button>
         )}
-        <button className="secondary" onClick={() => onNavigate("/wc")}>
+        <button type="button" className="secondary" onClick={() => onNavigate("/wc")}>
           Mở đội hình
         </button>
-        <button className="ghost-icon" title="Ẩn" onClick={dismiss}>
+        <button type="button" className="ghost-icon" title="Ẩn" onClick={dismiss}>
           <X size={17} />
         </button>
       </div>

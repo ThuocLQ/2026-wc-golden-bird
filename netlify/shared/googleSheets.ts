@@ -32,18 +32,26 @@ function getSheetsClient() {
 let supabaseClient: SupabaseClient | null = null;
 
 function hasSupabaseConfig(): boolean {
-  return Boolean(optionalEnv("SUPABASE_URL") && optionalEnv("SUPABASE_SERVICE_ROLE_KEY"));
+  return Boolean(optionalEnv("SUPABASE_URL") && getSupabaseServerKey());
 }
 
 function getSupabaseClient(): SupabaseClient {
   if (supabaseClient) return supabaseClient;
-  supabaseClient = createClient(requiredEnv("SUPABASE_URL"), requiredEnv("SUPABASE_SERVICE_ROLE_KEY"), {
+  const serverKey = getSupabaseServerKey();
+  if (!serverKey) {
+    throw new ApiError("SHEET_ERROR", "Missing SUPABASE_SECRET_KEY");
+  }
+  supabaseClient = createClient(requiredEnv("SUPABASE_URL"), serverKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
     },
   });
   return supabaseClient;
+}
+
+function getSupabaseServerKey(): string | undefined {
+  return optionalEnv("SUPABASE_SECRET_KEY") || optionalEnv("SUPABASE_SERVICE_ROLE_KEY");
 }
 
 function rowFromValues(tableName: TableName, values: string[]): Record<string, string> {

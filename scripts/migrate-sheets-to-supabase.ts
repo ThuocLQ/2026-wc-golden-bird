@@ -7,7 +7,7 @@ import { tableHeaders, type TableName } from "../netlify/shared/sheetTables.js";
 loadLocalEnv();
 
 const supabaseUrl = requiredEnv("SUPABASE_URL");
-const supabaseServiceRoleKey = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
+const supabaseServiceRoleKey = requiredEnv("SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_ROLE_KEY");
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
   auth: {
     persistSession: false,
@@ -55,8 +55,8 @@ function loadLocalEnv() {
   }
 }
 
-function requiredEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) throw new Error(`Missing ${name}`);
+function requiredEnv(...names: string[]): string {
+  const value = names.map((name) => process.env[name]).find(Boolean);
+  if (!value) throw new Error(`Missing ${names.join(" or ")}`);
   return value;
 }
