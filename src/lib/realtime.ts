@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { authStore } from "../features/auth/authStore";
+import { hasActiveMutation } from "./apiActivity";
 import { isMockApiEnabled } from "./mockMode";
 
 const eventName = "lunch-board:data-changed";
@@ -22,7 +23,7 @@ export function notifyDataChanged(path: string) {
   channel?.postMessage(message);
 }
 
-export function useRealtimeSync(resource: ChangeResource, onRefresh: () => void | Promise<void>, intervalMs = 8000) {
+export function useRealtimeSync(resource: ChangeResource, onRefresh: () => void | Promise<void>, intervalMs = 15000) {
   const callbackRef = useRef(onRefresh);
   const busyRef = useRef(false);
   const versionRef = useRef(0);
@@ -33,7 +34,7 @@ export function useRealtimeSync(resource: ChangeResource, onRefresh: () => void 
 
   useEffect(() => {
     async function refresh(force = false) {
-      if (busyRef.current || document.visibilityState !== "visible" || isEditingText()) return;
+      if (busyRef.current || document.visibilityState !== "visible" || isEditingText() || hasActiveMutation()) return;
       busyRef.current = true;
       try {
         if (isMockApiEnabled() && !force) return;
