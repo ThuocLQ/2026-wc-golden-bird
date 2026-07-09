@@ -7,6 +7,7 @@ const prefixes = {
   comment: "c",
   reaction: "r",
   email: "e",
+  wc: "wc",
 } as const;
 
 export function createId(kind: keyof typeof prefixes): string {

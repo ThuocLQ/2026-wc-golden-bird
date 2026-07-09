@@ -1,8 +1,8 @@
 import { apiGet, apiPost } from "../../lib/apiClient";
 import type { CurrentUser } from "./types";
 
-export function login(email: string, pin: string) {
-  return apiPost<{ token: string; user: CurrentUser }>("auth-login", { email, pin });
+export function login(username: string) {
+  return apiPost<{ token: string; user: CurrentUser }>("auth-login", { username });
 }
 
 export function me() {

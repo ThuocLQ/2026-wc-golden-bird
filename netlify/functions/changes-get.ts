@@ -3,8 +3,9 @@ import { requireAuth } from "../shared/auth.js";
 import { readTable } from "../shared/googleSheets.js";
 import { handleApi, ok } from "../shared/response.js";
 import type { AppConfigRow, CommentRow, EmailLogRow, LunchEntryRow, PostRow, ReactionRow, UserRow } from "../shared/types.js";
+import { wcVersion } from "../shared/wc.js";
 
-type ChangeResource = "today" | "feed" | "comments" | "members" | "notifications";
+type ChangeResource = "today" | "feed" | "comments" | "members" | "notifications" | "wc";
 
 type VersionMap = Record<ChangeResource, number>;
 
@@ -23,7 +24,7 @@ export const handler: Handler = async (event) =>
   });
 
 async function getVersions(): Promise<VersionMap> {
-  const [users, lunchEntries, posts, comments, reactions, emailLogs, appConfig] = await Promise.all([
+  const [users, lunchEntries, posts, comments, reactions, emailLogs, appConfig, wc] = await Promise.all([
     readTable<UserRow>("users"),
     readTable<LunchEntryRow>("lunch_entries"),
     readTable<PostRow>("posts"),
@@ -31,6 +32,7 @@ async function getVersions(): Promise<VersionMap> {
     readTable<ReactionRow>("reactions"),
     readTable<EmailLogRow>("email_logs"),
     readTable<AppConfigRow>("app_config"),
+    wcVersion(),
   ]);
 
   return {
@@ -39,6 +41,7 @@ async function getVersions(): Promise<VersionMap> {
     comments: latestMs([...users, ...comments, ...reactions]),
     members: latestMs(users),
     notifications: latestMs(emailLogs),
+    wc,
   };
 }
 

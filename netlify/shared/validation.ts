@@ -6,8 +6,9 @@ export const targetTypeSchema = z.enum(["POST", "COMMENT"]);
 export const reactionTypeSchema = z.enum(["LIKE", "LOVE", "ANGRY"]);
 
 export const loginSchema = z.object({
-  email: z.string().email().transform((value) => value.toLowerCase()),
-  pin: z.string().min(4).max(20),
+  username: z.string().trim().min(1).max(100).optional(),
+  email: z.string().trim().max(100).optional(),
+  pin: z.string().max(20).optional(),
 });
 
 export const lunchEntrySchema = z.object({
@@ -54,4 +55,12 @@ export const userIdSchema = z.object({
 export const setPinSchema = z.object({
   userId: z.string().min(1),
   pin: z.string().min(4).max(20),
+});
+
+export const wcSlotSchema = z.object({
+  slotNumber: z.number().int().min(1).max(5),
+});
+
+export const wcRequestSchema = z.object({
+  requestId: z.string().min(1),
 });

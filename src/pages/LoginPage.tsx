@@ -1,4 +1,4 @@
-import { LockKeyhole, Mail, Trophy } from "lucide-react";
+import { Trophy, UserRound } from "lucide-react";
 import { useState } from "react";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { login } from "../features/auth/authApi";
@@ -8,8 +8,7 @@ import { demoAdmin } from "../lib/demoAccounts";
 import { isMockApiEnabled } from "../lib/mockMode";
 
 export function LoginPage({ onLogin }: { onLogin: (user: CurrentUser) => void }) {
-  const [email, setEmail] = useState("");
-  const [pin, setPin] = useState("");
+  const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const mockMode = isMockApiEnabled();
@@ -19,7 +18,7 @@ export function LoginPage({ onLogin }: { onLogin: (user: CurrentUser) => void })
     setSaving(true);
     setError("");
     try {
-      const result = await login(email, pin);
+      const result = await login(username);
       authStore.set(result.token, result.user);
       onLogin(result.user);
     } catch (err) {
@@ -42,22 +41,15 @@ export function LoginPage({ onLogin }: { onLogin: (user: CurrentUser) => void })
         </div>
         {mockMode && (
           <div className="notice">
-            Demo admin: <strong>{demoAdmin.email}</strong> / PIN <strong>{demoAdmin.pin}</strong>
+            Demo admin: <strong>{demoAdmin.displayName}</strong>
           </div>
         )}
         {error && <ErrorMessage message={error} />}
         <label>
-          Email
+          Username
           <span className="input-shell">
-            <Mail size={18} />
-            <input value={email} type="email" autoComplete="email" onChange={(event) => setEmail(event.target.value)} required />
-          </span>
-        </label>
-        <label>
-          PIN
-          <span className="input-shell">
-            <LockKeyhole size={18} />
-            <input value={pin} type="password" autoComplete="current-password" minLength={4} maxLength={20} onChange={(event) => setPin(event.target.value)} required />
+            <UserRound size={18} />
+            <input value={username} autoComplete="username" onChange={(event) => setUsername(event.target.value)} required />
           </span>
         </label>
         <button type="submit" disabled={saving}>{saving ? "Đang vào..." : "Đăng nhập"}</button>

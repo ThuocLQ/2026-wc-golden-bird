@@ -98,19 +98,17 @@ export async function mockApiRequest<T>(path: string, init: RequestInit = {}): P
 }
 
 function login(body: Record<string, unknown>, state: MockState) {
-  const email = String(body.email || demoAdmin.email).toLowerCase();
-  const pin = String(body.pin || "");
-  if (email === demoAdmin.email && pin && pin !== demoAdmin.pin) {
-    throw new Error("Demo admin PIN là 123456");
-  }
-  const existing = state.members.find((member) => member.email.toLowerCase() === email);
+  const username = normalizeLoginName(String(body.username || body.email || demoAdmin.displayName));
+  const existing = state.members.find((member) =>
+    [member.displayName, member.email, member.email.split("@")[0] ?? ""].some((value) => normalizeLoginName(value) === username),
+  );
   const user = existing
     ? toCurrentUser(existing)
     : {
         id: "u_demo",
-        email,
-        displayName: email.includes("@") ? email.split("@")[0] : "Demo User",
-        role: email.includes("admin") ? "ADMIN" : "MEMBER",
+        email: `${username || "demo"}@goldenbird.local`,
+        displayName: username || "Demo User",
+        role: username.includes("admin") ? "ADMIN" : "MEMBER",
       } satisfies CurrentUser;
   localStorage.setItem(userKey, JSON.stringify(user));
   return { token: "mock-token", user };
@@ -394,6 +392,10 @@ function myReaction(state: MockState, targetType: TargetType, targetId: string):
 
 function emptyReactions(): ReactionSummary {
   return { LIKE: 0, LOVE: 0, ANGRY: 0 };
+}
+
+function normalizeLoginName(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, "");
 }
 
 function topCounts(values: string[]) {
