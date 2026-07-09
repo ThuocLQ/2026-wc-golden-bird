@@ -28,7 +28,7 @@ export function ReactionButton({
 }) {
   const Icon = reactionIcons[type];
   return (
-    <button className={`icon-button reaction ${active ? "active" : ""}`} disabled={disabled} onClick={onClick} title={reactionLabels[type]}>
+    <button type="button" className={`icon-button reaction ${active ? "active" : ""}`} disabled={disabled} onClick={onClick} title={reactionLabels[type]}>
       <Icon size={17} />
       <span>{count}</span>
     </button>

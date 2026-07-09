@@ -70,7 +70,7 @@ export function LunchStatusForm({ data, onSaved }: { data: TodayDashboardData; o
         Ghi chú
         <textarea value={note} maxLength={500} onChange={(event) => { setNote(event.target.value); setDirty(true); }} placeholder="Không hành, ít cay..." />
       </label>
-      <button disabled={saving}>{saving ? "Đang lưu..." : "Lưu trạng thái"}</button>
+      <button type="submit" disabled={saving}>{saving ? "Đang lưu..." : "Lưu trạng thái"}</button>
     </form>
   );
 }

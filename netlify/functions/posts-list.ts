@@ -15,17 +15,34 @@ export const handler: Handler = async (event) =>
     const data = posts
       .filter((post) => post.lunchDate === date && post.status === "ACTIVE")
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-      .map((post) => ({
-        id: post.id,
-        lunchDate: post.lunchDate,
-        author: authorFor(support.users, post.authorId),
-        content: post.content,
-        reactionSummary: summarizeReactions(support.reactions, "POST", post.id),
-        myReaction: myReaction(support.reactions, user.id, "POST", post.id),
-        commentCount: support.comments.filter((comment) => comment.postId === post.id && comment.status === "ACTIVE").length,
-        createdAt: post.createdAt,
-        canDelete: user.role === "ADMIN" || user.id === post.authorId,
-      }));
+      .map((post) => {
+        const comments = support.comments
+          .filter((comment) => comment.postId === post.id && comment.status === "ACTIVE")
+          .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+          .map((comment) => ({
+            id: comment.id,
+            postId: comment.postId,
+            author: authorFor(support.users, comment.authorId),
+            content: comment.content,
+            reactionSummary: summarizeReactions(support.reactions, "COMMENT", comment.id),
+            myReaction: myReaction(support.reactions, user.id, "COMMENT", comment.id),
+            createdAt: comment.createdAt,
+            canDelete: user.role === "ADMIN" || user.id === comment.authorId,
+          }));
+
+        return {
+          id: post.id,
+          lunchDate: post.lunchDate,
+          author: authorFor(support.users, post.authorId),
+          content: post.content,
+          reactionSummary: summarizeReactions(support.reactions, "POST", post.id),
+          myReaction: myReaction(support.reactions, user.id, "POST", post.id),
+          commentCount: comments.length,
+          comments,
+          createdAt: post.createdAt,
+          canDelete: user.role === "ADMIN" || user.id === post.authorId,
+        };
+      });
 
     return ok(data);
   });

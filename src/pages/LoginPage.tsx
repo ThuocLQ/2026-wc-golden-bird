@@ -60,7 +60,7 @@ export function LoginPage({ onLogin }: { onLogin: (user: CurrentUser) => void })
             <input value={pin} type="password" autoComplete="current-password" minLength={4} maxLength={20} onChange={(event) => setPin(event.target.value)} required />
           </span>
         </label>
-        <button disabled={saving}>{saving ? "Đang vào..." : "Đăng nhập"}</button>
+        <button type="submit" disabled={saving}>{saving ? "Đang vào..." : "Đăng nhập"}</button>
       </form>
     </main>
   );

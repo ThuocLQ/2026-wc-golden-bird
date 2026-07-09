@@ -41,7 +41,7 @@ export function TodayPage() {
           </div>
           <p className="muted">{displayDate(data.date)} · Chốt món nhanh, khỏi rơi nhịp trận.</p>
         </div>
-        <button className="secondary" onClick={load}>
+        <button type="button" className="secondary" onClick={load}>
           Làm mới
         </button>
       </header>
