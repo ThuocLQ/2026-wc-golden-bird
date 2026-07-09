@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import { authStore } from "../features/auth/authStore";
+import { isMockApiEnabled } from "./mockMode";
 
 const eventName = "lunch-board:data-changed";
 const channelName = "lunch-board-realtime";
-type ChangeResource = "today" | "feed" | "comments" | "members" | "notifications";
+type ChangeResource = "today" | "feed" | "comments" | "members" | "notifications" | "wc";
 
 type RealtimeMessage = {
   source: string;
@@ -35,6 +36,7 @@ export function useRealtimeSync(resource: ChangeResource, onRefresh: () => void 
       if (busyRef.current || document.visibilityState !== "visible" || isEditingText()) return;
       busyRef.current = true;
       try {
+        if (isMockApiEnabled() && !force) return;
         if (!force) {
           const changes = await getChanges(versionRef.current);
           versionRef.current = Math.max(versionRef.current, changes.version, changes.versions[resource] ?? 0);
@@ -91,6 +93,7 @@ async function getChanges(since: number): Promise<{ version: number; versions: R
 }
 
 function resourcesForPath(path: string): ChangeResource[] {
+  if (path.startsWith("wc-")) return ["wc"];
   if (path.startsWith("lunch-entry")) return ["today"];
   if (path.startsWith("posts")) return ["feed"];
   if (path.startsWith("comments")) return ["feed", "comments"];

@@ -1,5 +1,6 @@
-import { Bell, CalendarDays, LogOut, Mail, MessageCircle, Trophy, Users } from "lucide-react";
+import { Bell, CalendarDays, DoorOpen, LogOut, Mail, MessageCircle, Trophy, Users } from "lucide-react";
 import type { CurrentUser } from "../features/auth/types";
+import { WcSignalBanner } from "./WcSignalBanner";
 
 export function Layout({
   user,
@@ -17,6 +18,7 @@ export function Layout({
   const navItems = [
     { path: "/today", label: "Bữa trưa", icon: CalendarDays },
     { path: "/feed", label: "Sân bàn luận", icon: MessageCircle },
+    { path: "/wc", label: "Đội hình WC", icon: DoorOpen },
     ...(user.role === "ADMIN"
       ? [
           { path: "/admin/members", label: "Đội hình", icon: Users },
@@ -62,7 +64,10 @@ export function Layout({
           </button>
         </div>
       </aside>
-      <main className="main">{children}</main>
+      <main className="main">
+        {path !== "/wc" && <WcSignalBanner user={user} onNavigate={onNavigate} />}
+        {children}
+      </main>
     </div>
   );
 }

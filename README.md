@@ -46,3 +46,36 @@ npm run preview
 ```
 
 Use `npm run netlify:dev` for local full-stack testing because the frontend calls `/.netlify/functions/*`.
+
+## Mock mode
+
+If your machine cannot run Netlify Functions or connect to Google Sheets, you can run the UI with browser mock data:
+
+```bash
+VITE_MOCK_API=true npm run dev
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:VITE_MOCK_API="true"; npm run dev
+```
+
+Demo admin account:
+
+```text
+Email: admin@goldenbird.local
+PIN: 123456
+```
+
+You can also log in with any other email. Emails containing `admin` become admins in mock mode.
+
+You can also enable mock mode from the browser once:
+
+```text
+http://localhost:5173/?mock=1
+```
+
+Use `?mock=0` to turn it off.
+
+The WC lineup tab is currently implemented for mock/local mode. It supports 5 selectable slots and a near-live "Muốn đi WC" signal across open app tabs.

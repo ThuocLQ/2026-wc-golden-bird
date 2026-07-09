@@ -1,4 +1,6 @@
 import { authStore } from "../features/auth/authStore";
+import { mockApiRequest } from "./mockApi";
+import { isMockApiEnabled } from "./mockMode";
 import { notifyDataChanged } from "./realtime";
 
 export type ApiResult<T> = { success: true; data: T } | { success: false; error: { code: string; message: string } };
@@ -19,6 +21,10 @@ export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
 }
 
 async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+  if (isMockApiEnabled()) {
+    return mockApiRequest<T>(path, init);
+  }
+
   const token = authStore.getToken();
   const response = await fetch(`/.netlify/functions/${path}`, {
     ...init,

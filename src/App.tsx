@@ -9,6 +9,7 @@ import { AdminNotificationsPage } from "./pages/AdminNotificationsPage";
 import { FeedPage } from "./pages/FeedPage";
 import { LoginPage } from "./pages/LoginPage";
 import { TodayPage } from "./pages/TodayPage";
+import { WcLineupPage } from "./pages/WcLineupPage";
 
 function currentPath() {
   return window.location.pathname === "/" ? "/today" : window.location.pathname;
@@ -76,6 +77,7 @@ export default function App() {
 
 function route(path: string) {
   if (path === "/feed") return <FeedPage />;
+  if (path === "/wc") return <WcLineupPage />;
   if (path === "/admin/members") return <AdminMembersPage />;
   if (path === "/admin/notifications") return <AdminNotificationsPage />;
   return <TodayPage />;
