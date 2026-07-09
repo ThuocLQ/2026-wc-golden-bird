@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { ApiError } from "./response.js";
 import { columnLetter, headersFor, type TableName } from "./sheetTables.js";
 
@@ -8,6 +9,10 @@ function requiredEnv(name: string): string {
     throw new ApiError("SHEET_ERROR", `Missing ${name}`);
   }
   return value;
+}
+
+function optionalEnv(name: string): string | undefined {
+  return process.env[name];
 }
 
 function getPrivateKey(): string {
@@ -22,6 +27,41 @@ function getSheetsClient() {
   });
 
   return google.sheets({ version: "v4", auth });
+}
+
+let supabaseClient: SupabaseClient | null = null;
+
+function hasSupabaseConfig(): boolean {
+  return Boolean(optionalEnv("SUPABASE_URL") && optionalEnv("SUPABASE_SERVICE_ROLE_KEY"));
+}
+
+function getSupabaseClient(): SupabaseClient {
+  if (supabaseClient) return supabaseClient;
+  supabaseClient = createClient(requiredEnv("SUPABASE_URL"), requiredEnv("SUPABASE_SERVICE_ROLE_KEY"), {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+  return supabaseClient;
+}
+
+function rowFromValues(tableName: TableName, values: string[]): Record<string, string> {
+  return headersFor(tableName).reduce<Record<string, string>>((acc, header, index) => {
+    acc[header] = values[index] ?? "";
+    return acc;
+  }, {});
+}
+
+function primaryKeyFor(tableName: TableName): string {
+  return tableName === "app_config" ? "key" : "id";
+}
+
+function insertConflictKeyFor(tableName: TableName): string | undefined {
+  if (tableName === "lunch_entries") return "lunchDate,userId";
+  if (tableName === "reactions") return "userId,targetType,targetId";
+  if (tableName === "app_config") return "key";
+  return undefined;
 }
 
 function isRetryableSheetError(error: unknown): boolean {
@@ -44,7 +84,7 @@ async function withSheetRetry<T>(action: () => Promise<T>): Promise<T> {
   throw lastError;
 }
 
-export async function readTable<T extends Record<string, string>>(tableName: TableName): Promise<Array<T & { rowNumber: number }>> {
+export async function readSheetTable<T extends Record<string, string>>(tableName: TableName): Promise<Array<T & { rowNumber: number }>> {
   try {
     const sheets = getSheetsClient();
     const response = await withSheetRetry(() =>
@@ -74,7 +114,7 @@ export async function readTable<T extends Record<string, string>>(tableName: Tab
   }
 }
 
-export async function appendRow(tableName: TableName, values: string[]): Promise<void> {
+export async function appendSheetRow(tableName: TableName, values: string[]): Promise<void> {
   try {
     const sheets = getSheetsClient();
     await withSheetRetry(() =>
@@ -93,7 +133,7 @@ export async function appendRow(tableName: TableName, values: string[]): Promise
   }
 }
 
-export async function updateRow(tableName: TableName, rowNumber: number, values: string[]): Promise<void> {
+export async function updateSheetRow(tableName: TableName, rowNumber: number, values: string[]): Promise<void> {
   try {
     const lastColumn = columnLetter(headersFor(tableName).length);
     const sheets = getSheetsClient();
@@ -110,4 +150,52 @@ export async function updateRow(tableName: TableName, rowNumber: number, values:
     console.error(error);
     throw new ApiError("SHEET_ERROR", `Could not update ${tableName}`);
   }
+}
+
+async function readSupabaseTable<T extends Record<string, string>>(tableName: TableName): Promise<Array<T & { rowNumber: number }>> {
+  const { data, error } = await getSupabaseClient().from(tableName).select("*");
+  if (error) {
+    console.error(error);
+    throw new ApiError("SHEET_ERROR", `Could not read ${tableName}`);
+  }
+
+  return (data ?? []).map((row, index) => ({ ...(row as T), rowNumber: index + 2 }));
+}
+
+async function appendSupabaseRow(tableName: TableName, values: string[]): Promise<void> {
+  const row = rowFromValues(tableName, values);
+  const conflictKey = insertConflictKeyFor(tableName);
+  const query = getSupabaseClient().from(tableName);
+  const { error } = conflictKey ? await query.upsert(row, { onConflict: conflictKey }) : await query.insert(row);
+  if (error) {
+    console.error(error);
+    throw new ApiError("SHEET_ERROR", `Could not append ${tableName}`);
+  }
+}
+
+async function updateSupabaseRow(tableName: TableName, values: string[]): Promise<void> {
+  const row = rowFromValues(tableName, values);
+  const primaryKey = primaryKeyFor(tableName);
+  const primaryValue = row[primaryKey];
+  if (!primaryValue) {
+    throw new ApiError("SHEET_ERROR", `Could not update ${tableName}`);
+  }
+
+  const { error } = await getSupabaseClient().from(tableName).update(row).eq(primaryKey, primaryValue);
+  if (error) {
+    console.error(error);
+    throw new ApiError("SHEET_ERROR", `Could not update ${tableName}`);
+  }
+}
+
+export async function readTable<T extends Record<string, string>>(tableName: TableName): Promise<Array<T & { rowNumber: number }>> {
+  return hasSupabaseConfig() ? readSupabaseTable<T>(tableName) : readSheetTable<T>(tableName);
+}
+
+export async function appendRow(tableName: TableName, values: string[]): Promise<void> {
+  return hasSupabaseConfig() ? appendSupabaseRow(tableName, values) : appendSheetRow(tableName, values);
+}
+
+export async function updateRow(tableName: TableName, rowNumber: number, values: string[]): Promise<void> {
+  return hasSupabaseConfig() ? updateSupabaseRow(tableName, values) : updateSheetRow(tableName, rowNumber, values);
 }
