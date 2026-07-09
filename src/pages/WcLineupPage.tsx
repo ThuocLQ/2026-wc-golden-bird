@@ -29,7 +29,7 @@ export function WcLineupPage() {
     load();
   }, []);
 
-  useRealtimeSync("wc", load, 2500);
+  useRealtimeSync("wc", load, 6000);
 
   async function run(action: () => Promise<unknown>) {
     setSaving(true);

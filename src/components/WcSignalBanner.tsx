@@ -19,7 +19,7 @@ export function WcSignalBanner({ user, onNavigate }: { user: CurrentUser; onNavi
     load().catch(() => setRequest(null));
   }, []);
 
-  useRealtimeSync("wc", load, 2500);
+  useRealtimeSync("wc", load, 6000);
 
   if (!request || dismissedId === request.id) return null;
 

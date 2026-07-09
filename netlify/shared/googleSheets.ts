@@ -161,7 +161,7 @@ export async function updateSheetRow(tableName: TableName, rowNumber: number, va
 }
 
 async function readSupabaseTable<T extends Record<string, string>>(tableName: TableName): Promise<Array<T & { rowNumber: number }>> {
-  const { data, error } = await getSupabaseClient().from(tableName).select("*");
+  const { data, error } = await withSupabaseRetry(() => getSupabaseClient().from(tableName).select("*"));
   if (error) {
     console.error(error);
     throw new ApiError("SHEET_ERROR", `Could not read ${tableName}`);
@@ -173,8 +173,10 @@ async function readSupabaseTable<T extends Record<string, string>>(tableName: Ta
 async function appendSupabaseRow(tableName: TableName, values: string[]): Promise<void> {
   const row = rowFromValues(tableName, values);
   const conflictKey = insertConflictKeyFor(tableName);
-  const query = getSupabaseClient().from(tableName);
-  const { error } = conflictKey ? await query.upsert(row, { onConflict: conflictKey }) : await query.insert(row);
+  const { error } = await withSupabaseRetry(() => {
+    const query = getSupabaseClient().from(tableName);
+    return conflictKey ? query.upsert(row, { onConflict: conflictKey }) : query.insert(row);
+  });
   if (error) {
     console.error(error);
     throw new ApiError("SHEET_ERROR", `Could not append ${tableName}`);
@@ -189,11 +191,20 @@ async function updateSupabaseRow(tableName: TableName, values: string[]): Promis
     throw new ApiError("SHEET_ERROR", `Could not update ${tableName}`);
   }
 
-  const { error } = await getSupabaseClient().from(tableName).update(row).eq(primaryKey, primaryValue);
+  const { error } = await withSupabaseRetry(() => getSupabaseClient().from(tableName).update(row).eq(primaryKey, primaryValue));
   if (error) {
     console.error(error);
     throw new ApiError("SHEET_ERROR", `Could not update ${tableName}`);
   }
+}
+
+async function withSupabaseRetry<T extends { error: unknown }>(action: () => PromiseLike<T>): Promise<T> {
+  let result = await action();
+  for (let attempt = 0; result.error && attempt < 2; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 200 * (attempt + 1)));
+    result = await action();
+  }
+  return result;
 }
 
 export async function readTable<T extends Record<string, string>>(tableName: TableName): Promise<Array<T & { rowNumber: number }>> {

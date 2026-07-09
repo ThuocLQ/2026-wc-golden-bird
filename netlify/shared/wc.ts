@@ -30,7 +30,6 @@ const configKey = "wc_state";
 
 export async function getWcState() {
   const state = await readWcState();
-  await saveWcState(state);
   return publicWcState(state);
 }
 
