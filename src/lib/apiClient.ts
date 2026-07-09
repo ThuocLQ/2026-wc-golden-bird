@@ -32,7 +32,7 @@ async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
   }
 
   const token = authStore.getToken();
-  const response = await fetch(`/.netlify/functions/${path}`, {
+  const response = await fetch(`/api/${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
@@ -56,7 +56,7 @@ async function readApiResult<T>(response: Response, path: string): Promise<ApiRe
       success: false,
       error: {
         code: "EMPTY_RESPONSE",
-        message: `API ${path} trả về response rỗng (${response.status}). Hãy chạy bằng npm run netlify:dev để có Netlify Functions.`,
+        message: `API ${path} trả về response rỗng (${response.status}). Hãy chạy bằng npm run cloudflare:dev để có Cloudflare Pages Functions.`,
       },
     } as ApiResult<T>;
   }

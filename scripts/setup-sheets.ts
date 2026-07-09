@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { google } from "googleapis";
-import { columnLetter, tableHeaders, type TableName } from "../netlify/shared/sheetTables.js";
+import { columnLetter, tableHeaders, type TableName } from "../server/shared/sheetTables.js";
 
 loadLocalEnv();
 

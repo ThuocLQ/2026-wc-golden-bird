@@ -23,7 +23,7 @@ export function notifyDataChanged(path: string) {
   channel?.postMessage(message);
 }
 
-export function useRealtimeSync(resource: ChangeResource, onRefresh: () => void | Promise<void>, intervalMs = 15000) {
+export function useRealtimeSync(resource: ChangeResource, onRefresh: () => void | Promise<void>, intervalMs = 25000) {
   const callbackRef = useRef(onRefresh);
   const busyRef = useRef(false);
   const versionRef = useRef(0);
@@ -78,7 +78,7 @@ export function useRealtimeSync(resource: ChangeResource, onRefresh: () => void 
 
 async function getChanges(since: number): Promise<{ version: number; versions: Record<ChangeResource, number>; changed: ChangeResource[] }> {
   const token = authStore.getToken();
-  const response = await fetch(`/.netlify/functions/changes-get?since=${since}`, {
+  const response = await fetch(`/api/changes-get?since=${since}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
   const text = await response.text();

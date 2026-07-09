@@ -2,6 +2,7 @@ node_modules/
 .npm-cache/
 dist/
 .netlify/
+.wrangler/
 .env
 .env.local
 *service-account*.json

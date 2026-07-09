@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { readSheetTable } from "../netlify/shared/googleSheets.js";
-import { tableHeaders, type TableName } from "../netlify/shared/sheetTables.js";
+import { readSheetTable } from "../server/shared/googleSheets.js";
+import { tableHeaders, type TableName } from "../server/shared/sheetTables.js";
 
 loadLocalEnv();
 

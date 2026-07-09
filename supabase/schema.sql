@@ -72,7 +72,19 @@ create table if not exists app_config (
 );
 
 create index if not exists lunch_entries_date_idx on lunch_entries ("lunchDate");
+create index if not exists lunch_entries_date_user_idx on lunch_entries ("lunchDate", "userId");
 create index if not exists posts_date_status_idx on posts ("lunchDate", status, "createdAt" desc);
 create index if not exists comments_post_status_idx on comments ("postId", status, "createdAt");
 create index if not exists reactions_target_idx on reactions ("targetType", "targetId", status);
+create index if not exists users_status_idx on users (status);
 create index if not exists email_logs_created_idx on email_logs ("createdAt" desc);
+
+insert into app_config (key, value, "updatedAt")
+values
+  ('version:today', '0', now()),
+  ('version:feed', '0', now()),
+  ('version:comments', '0', now()),
+  ('version:members', '0', now()),
+  ('version:notifications', '0', now()),
+  ('version:wc', '0', now())
+on conflict (key) do nothing;

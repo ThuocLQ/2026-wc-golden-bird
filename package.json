@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "netlify:dev": "netlify dev",
+    "cloudflare:dev": "npm run build && npx wrangler pages dev dist",
+    "cloudflare:deploy": "npm run build && npx wrangler pages deploy dist --project-name 2026-wc-golden-bird",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "hash-pin": "tsx scripts/hash-pin.ts",
@@ -14,7 +15,6 @@
     "migrate:supabase": "tsx scripts/migrate-sheets-to-supabase.ts"
   },
   "dependencies": {
-    "@netlify/functions": "^2.8.2",
     "@supabase/supabase-js": "^2.110.1",
     "@vitejs/plugin-react": "^4.3.4",
     "bcryptjs": "^2.4.3",
@@ -33,9 +33,9 @@
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "netlify-cli": "^17.38.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "vite": "^6.0.3"
+    "vite": "^6.0.3",
+    "wrangler": "^4.52.0"
   }
 }

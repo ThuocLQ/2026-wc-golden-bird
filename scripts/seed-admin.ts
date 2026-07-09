@@ -1,10 +1,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { hashPin } from "../netlify/shared/auth.js";
-import { nowIso } from "../netlify/shared/date.js";
-import { appendRow, readTable, updateRow } from "../netlify/shared/googleSheets.js";
-import { valuesFor } from "../netlify/shared/sheetTables.js";
-import type { UserRow } from "../netlify/shared/types.js";
+import { hashPin } from "../server/shared/auth.js";
+import { nowIso } from "../server/shared/date.js";
+import { appendRow, readTable, updateRow } from "../server/shared/googleSheets.js";
+import { valuesFor } from "../server/shared/sheetTables.js";
+import type { UserRow } from "../server/shared/types.js";
 
 loadLocalEnv();
 

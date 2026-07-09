@@ -1,6 +1,6 @@
 # Lunch Board
 
-Internal lunch status board built with Vite, React, TypeScript, Netlify Functions, Supabase/Postgres, Google Sheets fallback, and Resend.
+Internal lunch status board built with Vite, React, TypeScript, Cloudflare Pages Functions, Supabase/Postgres, Google Sheets fallback, and Resend.
 
 ## Setup
 
@@ -51,13 +51,14 @@ Internal lunch status board built with Vite, React, TypeScript, Netlify Function
 
 ```bash
 npm run dev
-npm run netlify:dev
+npm run cloudflare:dev
 npm run build
 npm run preview
 npm run migrate:supabase
+npm run cloudflare:deploy
 ```
 
-Use `npm run netlify:dev` for local full-stack testing because the frontend calls `/.netlify/functions/*`.
+Use `npm run cloudflare:dev` for local full-stack testing because the frontend calls `/api/*` through Cloudflare Pages Functions.
 
 ## Supabase Migration
 
@@ -66,5 +67,39 @@ Use `npm run netlify:dev` for local full-stack testing because the frontend call
 3. Optionally run `supabase/realtime.sql` after the tables are created if you want Supabase Realtime publications.
 4. Add `SUPABASE_URL` and `SUPABASE_SECRET_KEY` to `.env`.
 5. Run `npm run migrate:supabase` to copy current Google Sheets data into Supabase.
-6. Add the same two Supabase env vars to Netlify production environment variables.
-7. Deploy with `netlify deploy --build --prod`.
+6. Add the same Supabase env vars to Cloudflare Pages production variables.
+
+## Cloudflare Pages Deploy
+
+1. Create or import this GitHub repo in Cloudflare Pages.
+2. Use these build settings:
+
+   ```text
+   Build command: npm run build
+   Build output directory: dist
+   Root directory: /
+   ```
+
+3. Add these production variables/secrets in Cloudflare Pages:
+
+   ```text
+   SUPABASE_URL
+   SUPABASE_SECRET_KEY
+   JWT_SECRET
+   RESEND_API_KEY
+   FROM_EMAIL
+   ```
+
+4. Optional legacy fallback/import variables, only needed if you still use Google Sheets:
+
+   ```text
+   GOOGLE_SHEET_ID
+   GOOGLE_SERVICE_ACCOUNT_EMAIL
+   GOOGLE_PRIVATE_KEY
+   ```
+
+5. Deploy from GitHub or run:
+
+   ```bash
+   npm run cloudflare:deploy
+   ```
