@@ -54,13 +54,16 @@ export async function mockApiRequest<T>(path: string, init: RequestInit = {}): P
     case "lunch-entry-upsert":
       return upsertLunchEntry(state, body) as T;
     case "posts-list":
-      return state.posts.filter((post) => post.lunchDate === today()).sort((a, b) => b.createdAt.localeCompare(a.createdAt)) as T;
+      return listPosts(state) as T;
     case "posts-create":
       return createPost(state, body) as T;
     case "posts-delete":
       return deletePost(state, body) as T;
     case "comments-list":
-      return state.comments.filter((comment) => comment.postId === searchParams.get("postId")).sort((a, b) => a.createdAt.localeCompare(b.createdAt)) as T;
+      return state.comments
+        .filter((comment) => comment.postId === searchParams.get("postId"))
+        .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+        .map((comment) => hydrateComment(state, comment)) as T;
     case "comments-create":
       return createComment(state, body) as T;
     case "comments-delete":
@@ -136,6 +139,7 @@ function createPost(state: MockState, body: Record<string, unknown>) {
     reactionSummary: emptyReactions(),
     myReaction: null,
     commentCount: 0,
+    comments: [],
     createdAt: now(),
     canDelete: true,
   };
@@ -148,6 +152,36 @@ function deletePost(state: MockState, body: Record<string, unknown>) {
   state.posts = state.posts.filter((post) => post.id !== postId);
   state.comments = state.comments.filter((comment) => comment.postId !== postId);
   saveState(state);
+}
+
+function listPosts(state: MockState): Post[] {
+  return state.posts
+    .filter((post) => post.lunchDate === today())
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .map((post) => hydratePost(state, post));
+}
+
+function hydratePost(state: MockState, post: Post): Post {
+  const comments = state.comments
+    .filter((comment) => comment.postId === post.id)
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    .map((comment) => hydrateComment(state, comment));
+
+  return {
+    ...post,
+    reactionSummary: reactionSummary(state, "POST", post.id),
+    myReaction: myReaction(state, "POST", post.id),
+    commentCount: comments.length,
+    comments,
+  };
+}
+
+function hydrateComment(state: MockState, comment: Comment): Comment {
+  return {
+    ...comment,
+    reactionSummary: reactionSummary(state, "COMMENT", comment.id),
+    myReaction: myReaction(state, "COMMENT", comment.id),
+  };
 }
 
 function createComment(state: MockState, body: Record<string, unknown>) {
@@ -353,6 +387,11 @@ function reactionSummary(state: MockState, targetType: TargetType, targetId: str
   return summary;
 }
 
+function myReaction(state: MockState, targetType: TargetType, targetId: string): ReactionType | null {
+  const user = currentUser(state);
+  return state.reactions[`${targetType}:${targetId}:${user.id}`] ?? null;
+}
+
 function emptyReactions(): ReactionSummary {
   return { LIKE: 0, LOVE: 0, ANGRY: 0 };
 }
@@ -377,7 +416,7 @@ function normalizeState(state: Partial<MockState>): MockState {
   const normalized = {
     members: state.members ?? [],
     lunchEntries: state.lunchEntries ?? [],
-    posts: state.posts ?? [],
+    posts: (state.posts ?? []).map((post) => ({ ...post, comments: post.comments ?? [], commentCount: post.commentCount ?? 0 })),
     comments: state.comments ?? [],
     emailLogs: state.emailLogs ?? [],
     reactions: state.reactions ?? {},
@@ -419,6 +458,7 @@ function seedState(): MockState {
         reactionSummary: { LIKE: 2, LOVE: 1, ANGRY: 0 },
         myReaction: null,
         commentCount: 1,
+        comments: [],
         createdAt,
         canDelete: false,
       },
