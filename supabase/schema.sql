@@ -76,33 +76,3 @@ create index if not exists posts_date_status_idx on posts ("lunchDate", status, 
 create index if not exists comments_post_status_idx on comments ("postId", status, "createdAt");
 create index if not exists reactions_target_idx on reactions ("targetType", "targetId", status);
 create index if not exists email_logs_created_idx on email_logs ("createdAt" desc);
-
-do $$
-begin
-  alter publication supabase_realtime add table users;
-exception when duplicate_object then null;
-end $$;
-
-do $$
-begin
-  alter publication supabase_realtime add table lunch_entries;
-exception when duplicate_object then null;
-end $$;
-
-do $$
-begin
-  alter publication supabase_realtime add table posts;
-exception when duplicate_object then null;
-end $$;
-
-do $$
-begin
-  alter publication supabase_realtime add table comments;
-exception when duplicate_object then null;
-end $$;
-
-do $$
-begin
-  alter publication supabase_realtime add table reactions;
-exception when duplicate_object then null;
-end $$;

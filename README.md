@@ -63,7 +63,8 @@ Use `npm run netlify:dev` for local full-stack testing because the frontend call
 
 1. Create a Supabase project.
 2. Open Supabase SQL Editor and run `supabase/schema.sql`.
-3. Add `SUPABASE_URL` and `SUPABASE_SECRET_KEY` to `.env`.
-4. Run `npm run migrate:supabase` to copy current Google Sheets data into Supabase.
-5. Add the same two Supabase env vars to Netlify production environment variables.
-6. Deploy with `netlify deploy --build --prod`.
+3. Optionally run `supabase/realtime.sql` after the tables are created if you want Supabase Realtime publications.
+4. Add `SUPABASE_URL` and `SUPABASE_SECRET_KEY` to `.env`.
+5. Run `npm run migrate:supabase` to copy current Google Sheets data into Supabase.
+6. Add the same two Supabase env vars to Netlify production environment variables.
+7. Deploy with `netlify deploy --build --prod`.
